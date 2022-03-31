@@ -219,6 +219,13 @@ class LogStash::Inputs::OktaSystemLog < LogStash::Inputs::Base
   # This is not the filepath of the file itself, but to generate the file.
   config :state_file_base, :validate => :string,
     :obsolete => "state_file_base is obsolete, use state_file_path instead"
+  
+  # Option for 3rd party callers to declare themselves?
+  # The default, default, means to nobody did it?
+  #
+  # Format: string
+  # Default: default
+  config :thirdparty, :validate => :string, :default => "default"
  
   # Based on data from here: https://developer.okta.com/docs/reference/api/system-log/#system-events
   # -- For One App and Enterprise orgs, the warning is sent when the org is at 60% of its limit.
@@ -579,7 +586,8 @@ class LogStash::Inputs::OktaSystemLog < LogStash::Inputs::Base
 
     header_hash = {
                   "Accept" => "application/json",
-                  "Content-Type" => "application/json"
+                  "Content-Type" => "application/json",
+                  "User-Agent" => "SecurityRiskAdvisorsLSP/1.0 (#{@thirdparty})"
                   }
 
     if (@auth_token)
